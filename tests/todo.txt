@@ -1,0 +1,8 @@
+<?php
+
+//tests
+
+//Database class
+//1 - test that can check if db exists - should return true when db is there, false when now
+//2 - check that can create database
+//3 - check that can remove database?

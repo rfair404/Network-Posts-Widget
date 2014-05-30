@@ -37,10 +37,15 @@ class Populate{
     }
 
     function update_post($post){
-        global $wpdb;
-        $post_data = $this->populate_post_data($post);
-        $where = array('id', get_post_meta( $post->ID, 'npw_id', true));
-        $wpdb->update($wpdb_base_prefix . $this->table, $post_data, $where);
+        if( ! get_post_meta( $post->ID , 'npw_id' )){
+            // is set so that existing posts can continue to be indexed
+            $this->add_post( $post );
+        } else {
+            global $wpdb;
+            $post_data = $this->populate_post_data($post);
+            $where = array('id', get_post_meta( $post->ID, 'npw_id', true));
+            $wpdb->update($wpdb_base_prefix . $this->table, $post_data, $where);
+        }
     }
 
     function remove_post($post){
