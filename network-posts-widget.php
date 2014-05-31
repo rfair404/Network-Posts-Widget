@@ -23,5 +23,12 @@ Later Versions:
 Beyond that? Who knows
 */
 
+/**
+* @todo write some actual unit tests
+* @todo run the tests
+* @todo write WordPress repository readme and release
+* @todo allow for multiple widgets / cache etc
+*/
+
 require_once('lib/Core.php');
 new NPW\Core;
