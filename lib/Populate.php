@@ -7,10 +7,14 @@ class Populate{
 
     function __construct(){
         add_action('init', array($this, 'clear_cache'), 10, 3);
-
         add_action('transition_post_status', array($this, 'do_indexing'), 10, 3);
     }
-
+    /**
+    * determines if the post should be indexed based on post status
+    * @param string $new_status the incoming (updated) post status
+    * @param string $old_status the outcoing (outdated) post status
+    * @param mixed $post the edited post object
+    */
     function do_indexing($new_status, $old_status, $post ){
         if( $old_status == 'publish' && $new_status != 'publish' ){
             //here we're dealing with a status update that 'unpublishes' a post
@@ -29,6 +33,11 @@ class Populate{
         return;
     }
 
+    /**
+    * adds post to the network index
+    * @todo remove dependency on get post meta and rely on something more reliable like matching blog_id and post_id
+    * @param mixed $post the post to use
+    */
     function add_post($post){
         global $wpdb;
         $post_data = $this->populate_post_data($post);
@@ -36,6 +45,11 @@ class Populate{
         add_post_meta($post->ID, 'npw_id', $wpdb->insert_id);
     }
 
+    /**
+    * Updates posts in the indes (or creates them if they don't exist)
+    * @todo add a more reliable way to add/update, perhaps use $wpdb->replace instead
+    * @param object $post the post to update
+    */
     function update_post($post){
         if( ! get_post_meta( $post->ID , 'npw_id' )){
             // is set so that existing posts can continue to be indexed
@@ -48,6 +62,11 @@ class Populate{
         }
     }
 
+    /**
+    * Removes posts from the index
+    * @todo don't rely on post meta
+    * @param mixed $post the post to remove
+    */
     function remove_post($post){
         global $wpdb;
         $where = array('id', get_post_meta( $post->ID, 'npw_id', true));
@@ -55,6 +74,11 @@ class Populate{
         delete_post_meta($post->ID, 'npw_id');
     }
 
+    /**
+    * matches up the post object values to our table's expected keys
+    * @param mixed $post the post to assign
+    * @return array $post_data the assigned post data
+    */
     function populate_post_data($post){
         $post_data = array(
             'post_id' => $post->ID,

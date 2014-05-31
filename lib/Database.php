@@ -10,11 +10,16 @@ class Database{
         add_action('init', array($this, 'check_db'), 10);
     }
 
+    /*
+    * sets the table name to our custom table
+    */
     function set_table(){
         $this->table = 'network_posts';
     }
-    //checks the database
-    //would be better if we only hooked this check on our settings page, or only ran on activation but for now this is it
+    /**
+    * Creates the database if it doesn't exist
+    * @todo hook this into a more reasonable place than every init
+    */
     function check_db(){
         if( ! $this->database_exists() ){
             $this->create_table();
@@ -33,7 +38,8 @@ class Database{
        return $table_exists;
     }
     /**
-    * As much as possible I've attempted to mirror the WP db schema so that the data can be copied over neatly
+    * Creates the DB table, mirrors the wp_post schema
+    * @todo verify this is indeed the correct schema and that the codex insn't out of date, update codex if applicable
     */
     function create_table(){
         global $wpdb;

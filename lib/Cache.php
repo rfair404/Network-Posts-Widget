@@ -11,14 +11,24 @@ class Cache{
         add_action('init', array($this, 'check_cache') );
     }
 
+    /**
+    * Sets the database table name
+    * @todo move this to a common class so it can be done once
+    */
     function set_table(){
         $this->table = 'network_posts';
     }
 
+    /**
+    * sets the default cache timeout
+    * allows easy filter to increase/decrease the time
+    */
     function set_cache_time(){
         $this->cache_time = apply_filters('nsf_cache_time', 1);
     }
-
+    /**
+    * Checks if the cache transient exists, and creates it if not
+    */
     function check_cache(){
         $cache = get_site_transient('network-posts-widget-cache-output');
         if( ! $cache ){
@@ -26,10 +36,17 @@ class Cache{
         }
     }
 
+    /**
+    * Clears the cache
+    * @todo trigger a refresh
+    */
     function clear_cache(){
         delete_site_transient('network-posts-widget-cache-output');
     }
 
+    /**
+    * Queries the posts and stashes the output into a transient
+    */
     function build_cache(){
         $network_posts = $this->get_posts();
         if($network_posts){
@@ -42,6 +59,12 @@ class Cache{
 
     }
 
+    /**
+    * Applies a "template" to the posts
+    * @todo make this actually something that can be overridden easily
+    * @param array $network_posts the posts result
+    * @return string $markup the html to store
+    */
     function markup_posts($network_posts){
         if(is_array($network_posts)){
             $markup = '<div class="network-posts">';
@@ -72,6 +95,12 @@ class Cache{
         return false;
     }
 
+    /**
+    * Queries the latest posts in the index
+    * @todo make queries that are more customizable
+    * @todo allow interfaces for multiple widgets / blogs to customize
+    * @return mixed $network_posts the array of found posts - false if none or error
+    */
     function get_posts(){
         global $wpdb;
 

@@ -6,7 +6,9 @@ class NPW_Widget extends WP_Widget{
         $control_ops = array( 'width' => 200, 'height' => 250, 'id_base' => 'network-posts-widget' );
         $this->WP_Widget( 'network-posts-widget', 'Network Posts', $widget_ops, $control_ops );
     }
-
+    /**
+    * The widget output
+    */
     function widget($args, $instance){
         extract($args);
         echo $before_widget;
@@ -20,10 +22,20 @@ class NPW_Widget extends WP_Widget{
         echo $after_widget;
     }
 
+    /**
+    * Filter the options before save
+    */
     function update($new_instance, $old_instance) {
         return $new_instance;
     }
 
+    /**
+    * the Widget control form
+    * @todo add option to exclude blogs
+    * @todo add option to limit posts to N posts
+    * @todo add option to exclude post types
+    * @todo add option to change sort by (date, meta etc)
+    */
      function form($instance) {
         $instance = wp_parse_args((array)$instance, array(
             'title' => '',
