@@ -6,7 +6,6 @@ class Populate{
     private $table = 'network_posts';
 
     function __construct(){
-        add_action('init', array($this, 'clear_cache'), 10, 3);
         add_action('transition_post_status', array($this, 'do_indexing'), 10, 3);
     }
     /**
