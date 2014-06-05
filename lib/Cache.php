@@ -90,11 +90,13 @@ class Cache{
             foreach($network_posts as $network_post){
                 switch_to_blog($network_post->blog_id);
                 $markup .= '<div class="hentry">';
-                $markup .= sprintf('<h3 class="entry-title"><a href="%s" title="%s">%s</a></h3>', get_the_permalink( $network_post->post_id ), __('View Post', 'network-posts-widget'), apply_filters('the_title', $network_post->post_title));
-
                 if(has_post_thumbnail($network_post->post_id)) {
                     $markup .= sprintf('<figure>%s</figure>', get_the_post_thumbnail( $network_post->post_id ) );
                 }
+
+                $markup .= sprintf('<h3 class="entry-title"><a href="%s" title="%s">%s</a></h3>', get_the_permalink( $network_post->post_id ), __('View Post', 'network-posts-widget'), apply_filters('the_title', $network_post->post_title));
+
+
                 $user = get_user_by('id', $network_post->post_author);
                 $markup .= sprintf('<p class="meta"><span class="author"><a href="%s" title="%s">%s</a></span> <span class="date">%s</span></p>', get_author_posts_url( $network_post->post_author ), esc_attr($user->display_name), $user->display_name, apply_filters('npw_date', $network_post->post_date));
                 if($network_post->post_excerpt){
