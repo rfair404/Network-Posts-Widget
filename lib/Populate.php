@@ -15,11 +15,21 @@ class Populate{
     * @param mixed $post the edited post object
     */
     function do_indexing($new_status, $old_status, $post ){
+        if( $new_status == 'auto-draft' ){
+            return;
+        }
+
+        $post_type_object = get_post_type_object( $post->post_type );
+
+        if($post_type_object->publicly_queryable = 0){
+            return;
+        }
+
         if( $old_status == 'publish' && $new_status != 'publish' ){
             //here we're dealing with a status update that 'unpublishes' a post (e.g. trash, change to draft)
             $this->remove_post($post);
         }
-        else{
+        elseif( $new_status == 'publish' ){
             $this->index_post($post);
         }
         return;
