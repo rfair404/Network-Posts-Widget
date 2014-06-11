@@ -25,6 +25,8 @@ class NPW_Widget extends WP_Widget{
     * Filter the options before save
     */
     function update($new_instance, $old_instance) {
+        $cache = new NPW\Cache($this->id);
+        $cache->clear_cache($this->id);
         return $new_instance;
     }
 

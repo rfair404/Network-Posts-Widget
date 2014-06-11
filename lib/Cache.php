@@ -12,10 +12,10 @@ class Cache{
     }
 
     public function get_cached_output($id){
-        // $cache = get_site_transient($id);
-        // if( ! $cache ){
+        $cache = get_site_transient($id);
+        if( ! $cache ){
             $cache = $this->build_cache($id);
-        // }
+        }
         return $cache;
     }
 
@@ -34,23 +34,15 @@ class Cache{
     function set_cache_time(){
         $this->cache_time = apply_filters('npw_cache_time', 60*60);
     }
-    // /**
-    // * Checks if the cache transient exists, and creates it if not
-    // */
-    // function check_cache(){
-    //     $cache = get_site_transient('network-posts-widget-cache-output');
-    //     if( ! $cache ){
-    //         $cache = $this->build_cache('network-posts-widget-cache-output');
-    //     }
-    // }
+
 
     /**
     * Clears the cache
     * @todo trigger a refresh
     */
-    // function clear_cache(){
-    //     delete_site_transient('network-posts-widget-cache-output');
-    // }
+    function clear_cache($id){
+        delete_site_transient($id);
+    }
 
     /**
     * Queries the posts and stashes the output into a transient
@@ -86,7 +78,7 @@ class Cache{
     */
     function markup_posts($network_posts){
         if(is_array($network_posts)){
-            $markup = '<div class="network-posts">';
+            $markup = sprintf('<div class="network-posts"><!-- cache generated %s-->', time());
             foreach($network_posts as $network_post){
                 switch_to_blog($network_post->blog_id);
                 $markup .= '<div class="hentry">';

@@ -4,7 +4,7 @@
 * Plugin Name: Network Posts Widget
 * Description: a WordPress network wide post widget that dosen't suck
 * Author: Russell Fair
-* Version: 0.1
+* Version: 0.2
 */
 
 /*

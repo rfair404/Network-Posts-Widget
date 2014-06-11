@@ -41,7 +41,7 @@ class Populate{
         global $wpdb;
         $post_data = $this->populate_post_data($post);
         $wpdb->insert($wpdb->base_prefix . $this->table, $post_data);
-        add_post_meta($post->ID, 'npw_id', $wpdb->insert_id);
+        add_post_meta($post->ID, '_npw_id', $wpdb->insert_id);
     }
 
     /**
@@ -50,13 +50,13 @@ class Populate{
     * @param object $post the post to update
     */
     function update_post($post){
-        if( ! get_post_meta( $post->ID , 'npw_id' )){
+        if( ! get_post_meta( $post->ID , '_npw_id' )){
             // is set so that existing posts can continue to be indexed
             $this->add_post( $post );
         } else {
             global $wpdb;
             $post_data = $this->populate_post_data($post);
-            $where = array('id', get_post_meta( $post->ID, 'npw_id', true));
+            $where = array('id', get_post_meta( $post->ID, '_npw_id', true));
             $wpdb->update($wpdb_base_prefix . $this->table, $post_data, $where);
         }
     }
@@ -68,9 +68,9 @@ class Populate{
     */
     function remove_post($post){
         global $wpdb;
-        $where = array('id', get_post_meta( $post->ID, 'npw_id', true));
+        $where = array('id', get_post_meta( $post->ID, '_npw_id', true));
         $wpdb->delete( $wpdb_base_prefix . $this->table, $where);
-        delete_post_meta($post->ID, 'npw_id');
+        delete_post_meta($post->ID, '_npw_id');
     }
 
     /**
