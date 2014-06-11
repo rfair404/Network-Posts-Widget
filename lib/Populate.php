@@ -16,24 +16,45 @@ class Populate{
     */
     function do_indexing($new_status, $old_status, $post ){
         if( $old_status == 'publish' && $new_status != 'publish' ){
-            //here we're dealing with a status update that 'unpublishes' a post
+            //here we're dealing with a status update that 'unpublishes' a post (e.g. trash, change to draft)
             $this->remove_post($post);
         }
-        elseif( $old_status != 'publish' && $new_status == 'publish' ){
-            //ok we're dealing with a newly published post, lets add it
-            $this->add_post($post);
-        }else{
-            $this->update_post($post);
+        else{
+            $this->index_post($post);
         }
         return;
     }
 
     /**
-    * adds post to the network index
+    * Adds (or updates) posts in the index
+    */
+    function index_post($post){
+        if($this->is_indexed($post)){
+            $this->update_post($post);
+        }else{
+            $this->insert_post($post);
+        }
+    }
+
+    /**
+    * Checks if an existing post is in the database
+    */
+    function is_indexed($post){
+        global $wpdb;
+        $query = $wpdb->prepare("
+            SELECT post_id FROM
+            $wpdb->base_prefix$this->table
+            WHERE post_id = %d
+            AND blog_id = %d
+        ", $post->ID,  get_current_blog_id());
+        return $wpdb->get_col($query);
+    }
+    /**
+    * inserts post to the network index
     * @todo remove dependency on get post meta and rely on something more reliable like matching blog_id and post_id
     * @param mixed $post the post to use
     */
-    function add_post($post){
+    function insert_post($post){
         global $wpdb;
         $post_data = $this->populate_post_data($post);
         $wpdb->insert($wpdb->base_prefix . $this->table, $post_data);
