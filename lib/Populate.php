@@ -22,12 +22,8 @@ class Populate{
         elseif( $old_status != 'publish' && $new_status == 'publish' ){
             //ok we're dealing with a newly published post, lets add it
             $this->add_post($post);
-        }elseif( $old_status == 'publish' && $new_status == 'publish' ){
-            //this is a regular update, need to update the index
-            $this->update_post($post);
         }else{
-            //what about custom post statuses?
-            //do nothing for now.
+            $this->update_post($post);
         }
         return;
     }
@@ -41,7 +37,6 @@ class Populate{
         global $wpdb;
         $post_data = $this->populate_post_data($post);
         $wpdb->insert($wpdb->base_prefix . $this->table, $post_data);
-        add_post_meta($post->ID, '_npw_id', $wpdb->insert_id);
     }
 
     /**
@@ -50,15 +45,10 @@ class Populate{
     * @param object $post the post to update
     */
     function update_post($post){
-        if( ! get_post_meta( $post->ID , '_npw_id' )){
-            // is set so that existing posts can continue to be indexed
-            $this->add_post( $post );
-        } else {
-            global $wpdb;
-            $post_data = $this->populate_post_data($post);
-            $where = array('id', get_post_meta( $post->ID, '_npw_id', true));
-            $wpdb->update($wpdb_base_prefix . $this->table, $post_data, $where);
-        }
+        global $wpdb;
+        $post_data = $this->populate_post_data($post);
+        $where = array('post_id' => $post->ID, 'blog_id' => get_current_blog_id());
+        $wpdb->update($wpdb->base_prefix . $this->table, $post_data, $where);
     }
 
     /**
@@ -68,9 +58,8 @@ class Populate{
     */
     function remove_post($post){
         global $wpdb;
-        $where = array('id', get_post_meta( $post->ID, '_npw_id', true));
-        $wpdb->delete( $wpdb_base_prefix . $this->table, $where);
-        delete_post_meta($post->ID, '_npw_id');
+        $where = array('post_id' => $post->ID, 'blog_id' => get_current_blog_id());
+        $wpdb->delete( $wpdb->base_prefix . $this->table, $where);
     }
 
     /**
